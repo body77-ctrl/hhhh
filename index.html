@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>إلى أحلى حاجة في الدنيا</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Tajawal:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --night:#1d1226; --plum:#3a1f45; --rose:#e8899b; --blush:#f6d6d9; --gold:#e3b878; --text:#fbf1f0; --muted:#d9c3cc;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--night);color:var(--text);font-family:'Tajawal',sans-serif;font-size:19px;line-height:2;overflow-x:hidden}
+h1,h2,.script{font-family:'Aref Ruqaa',serif;font-weight:700}
+#hearts{position:fixed;inset:0;pointer-events:none;z-index:0}
+section{position:relative;z-index:1}
+
+/* Opening */
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:60px 24px;
+  background:radial-gradient(ellipse at 50% 30%,var(--plum),var(--night) 70%)}
+.letter{max-width:680px;text-align:center}
+.letter h1{font-size:clamp(34px,7vw,56px);color:var(--blush);margin-bottom:28px;line-height:1.5}
+.letter p{color:var(--muted);min-height:6em}
+.letter p.final{color:var(--gold);font-family:'Aref Ruqaa',serif;font-size:1.25em;margin-top:18px}
+.start{margin-top:40px;background:none;border:1.5px solid var(--rose);color:var(--blush);font:inherit;padding:10px 34px;border-radius:40px;cursor:pointer;opacity:0;transition:.4s}
+.start.show{opacity:1}
+.start:hover,.start:focus-visible{background:var(--rose);color:var(--night);outline:none}
+
+/* Memories */
+.memory{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:56px;max-width:1100px;margin:0 auto;padding:80px 28px}
+.memory:nth-of-type(even) .photo{order:2}
+.photo{position:relative;aspect-ratio:4/5;border-radius:200px 200px 18px 18px;overflow:hidden;background:var(--plum);box-shadow:0 30px 70px -20px rgba(232,137,155,.35);transform:rotate(-2deg)}
+.memory:nth-of-type(even) .photo{transform:rotate(2deg)}
+.photo img{width:100%;height:100%;object-fit:cover;display:block}
+.photo .missing{position:absolute;inset:0;display:none;align-items:center;justify-content:center;text-align:center;padding:20px;color:var(--muted);font-size:15px;direction:ltr}
+.text h2{font-size:clamp(28px,4.4vw,42px);color:var(--blush);margin-bottom:16px;line-height:1.6}
+.text p{color:var(--muted);max-width:30em}
+.reveal{opacity:0;transform:translateY(30px);transition:opacity 1s,transform 1s}
+.reveal.in{opacity:1;transform:none}
+
+/* Surprise */
+.finale{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:80px 24px;gap:20px}
+.finale h2{font-size:clamp(32px,6vw,52px);color:var(--blush)}
+.finale p{max-width:560px;color:var(--muted)}
+.heartbtn{margin-top:20px;width:110px;height:110px;border:none;background:none;cursor:pointer;font-size:84px;line-height:1;animation:beat 1.6s infinite;filter:drop-shadow(0 0 24px rgba(232,137,155,.7))}
+@keyframes beat{0%,100%{transform:scale(1)}15%{transform:scale(1.18)}30%{transform:scale(1)}45%{transform:scale(1.12)}}
+#surprise{opacity:0;max-height:0;overflow:hidden;transition:opacity 1.2s,max-height 1.2s;color:var(--gold);font-family:'Aref Ruqaa',serif;font-size:1.45em;line-height:2.1}
+#surprise.open{opacity:1;max-height:600px}
+
+/* Music */
+#music{position:fixed;bottom:18px;left:18px;z-index:10;width:48px;height:48px;border-radius:50%;border:1.5px solid var(--rose);background:rgba(29,18,38,.8);color:var(--blush);font-size:20px;cursor:pointer;backdrop-filter:blur(6px)}
+#music:focus-visible{outline:2px solid var(--gold)}
+
+@media(max-width:780px){
+  body{font-size:17px}
+  .memory{grid-template-columns:1fr;gap:30px;padding:60px 22px;min-height:auto}
+  .memory:nth-of-type(even) .photo{order:0}
+  .photo{max-width:340px;margin:0 auto;width:100%}
+  .text{text-align:center}.text p{margin:auto}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<canvas id="hearts" aria-hidden="true"></canvas>
+<audio id="song" src="song.mp3" loop preload="auto"></audio>
+<button id="music" aria-label="تشغيل أو إيقاف الأغنية">♪</button>
+
+<section class="hero">
+  <div class="letter">
+    <h1>إلى أحلى حاجة في الدنيا</h1>
+    <p id="typed"></p>
+    <p class="final" id="final"></p>
+    <button class="start" id="start">ابدأي الرحلة</button>
+  </div>
+</section>
+
+<main id="memories"></main>
+
+<section class="finale">
+  <h2>وفي الآخر…</h2>
+  <p>كل صورة فوق هي لحظة واحدة من حاجات كتير جوايا ليكي. دوسي على القلب.</p>
+  <button class="heartbtn" id="heart" aria-label="افتحي الرسالة الأخيرة">❤</button>
+  <p id="surprise">أنا هنا. جنبك النهاردة وبكرة وكل يوم.<br>وأي حاجة تعبك، هنشيلها سوا.<br>بحبك يا أجمل حاجة حصلتلي.</p>
+</section>
+
+<script>
+/* ====== عدّل هنا: الجمل والصور ======
+   الصور في فولدر اسمه images بجانب الملف ده */
+const OPENING = "أنا عارف إنك مضغوطة وزعلانة وتعبانة ومخنوقة. فقلت أعبّرلك عن اللي جوايا ليكي بطريقة مختلفة، يمكن ده يفرّحك يا أحلى حاجة في الدنيا.";
+const OPENING_END = "لأن سعادتك دي الحاجة الوحيدة اللي بتفرحني.";
+
+const MEMORIES = [
+  {img:"01-first-love.jpg",   title:"اللحظة اللي حبيتك فيها",
+   text:"في اللحظة دي حسيت إن قلبي اختار من غير ما يسألني. شفتك وعرفت إن حاجة جوايا اتغيرت للأبد."},
+  {img:"02-you-love-me.jpg",  title:"لما حسيت إنك بتحبيني",
+   text:"مكنتيش محتاجة تقولي. نظرتك قالتها، وأنا يومها حسيت إني أغنى واحد في الدنيا."},
+  {img:"03-challenge-world.jpg", title:"لما حسيت إني أقدر أتحدى العالم",
+   text:"في الصورة دي حسيت إن مفيش حاجة صعبة طالما إنتي في ضهري. كنت مستعد أواجه الدنيا كلها علشانك."},
+  {img:"04-must-be-beside-you.jpg", title:"لما عرفت إن مكاني جنبك",
+   text:"فهمت يومها إن مكاني الحقيقي جنبك، في الفرح وفي التعب، ومش هتحرك."},
+  {img:"05-your-smile.jpg",   title:"ضحكتك",
+   text:"ضحكتك دي بتصلّح أسوأ يوم عندي. نفسي أشوفها كل يوم لآخر عمري."},
+  {img:"06-calm.jpg",         title:"اللحظة اللي حسيت فيها بالأمان",
+   text:"معاكي الدنيا بتهدى. حاجة بسيطة منك بتخليني أتنفس من جديد."},
+  {img:"07-laughter.jpg",     title:"أجمل ضحكة سوا",
+   text:"فيه لحظات مبنساهاش، وده واحد منها. ضحكنا لحد ما الدنيا كلها نسيناها."},
+  {img:"08-your-eyes.jpg",    title:"عيونك",
+   text:"في عيونك بلاقي بيت. كل ما أبص فيها بحس إني رجعت لنفسي."},
+  {img:"09-proud.jpg",        title:"فخور بيكي",
+   text:"إنتي أقوى مما تتخيلي. كل اللي بتعدي بيه بيخليني أحترمك وأحبك أكتر."},
+  {img:"10-forever.jpg",      title:"وعد",
+   text:"وعدي ليكي إني أفضل أحبك وأحاول أفرّحك، مهما حصل. إنتي حياتي."}
+];
+
+/* ====== الصور والأغنية ====== */
+const main=document.getElementById('memories');
+MEMORIES.forEach(m=>{
+  const s=document.createElement('section');
+  s.className='memory reveal';
+  s.innerHTML=`<div class="photo"><img src="${m.img}" alt="${m.title}" loading="lazy"><div class="missing">${m.img}</div></div>
+    <div class="text"><h2>${m.title}</h2><p>${m.text}</p></div>`;
+  const img=s.querySelector('img');
+  img.onerror=()=>{img.style.display='none';s.querySelector('.missing').style.display='flex'};
+  main.appendChild(s);
+});
+
+/* ظهور تدريجي عند التمرير */
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.2});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+/* كتابة الرسالة الافتتاحية */
+const typed=document.getElementById('typed'),fin=document.getElementById('final'),startBtn=document.getElementById('start');
+let i=0;
+(function type(){
+  if(i<OPENING.length){typed.textContent+=OPENING[i++];setTimeout(type,45)}
+  else{fin.textContent=OPENING_END;startBtn.classList.add('show')}
+})();
+
+/* الأغنية */
+const song=document.getElementById('song'),mbtn=document.getElementById('music');
+function play(){song.volume=.6;song.play().then(()=>mbtn.textContent='♪').catch(()=>{})}
+mbtn.onclick=()=>{if(song.paused){play()}else{song.pause();mbtn.textContent='✕'}};
+startBtn.onclick=()=>{play();document.querySelector('.memory').scrollIntoView({behavior:'smooth'})};
+
+/* مفاجأة القلب */
+document.getElementById('heart').onclick=()=>{
+  document.getElementById('surprise').classList.add('open');
+  for(let k=0;k<30;k++)spawn(innerWidth/2,innerHeight*0.6,true);
+};
+
+/* قلوب طايرة في الخلفية */
+const cv=document.getElementById('hearts'),cx=cv.getContext('2d');let hs=[];
+function size(){cv.width=innerWidth;cv.height=innerHeight}size();addEventListener('resize',size);
+function spawn(x,y,burst){hs.push({x:x??Math.random()*cv.width,y:y??cv.height+20,s:8+Math.random()*14,v:.3+Math.random()*.7,
+  dx:burst?(Math.random()-.5)*4:(Math.random()-.5)*.4,a:.5+Math.random()*.4,life:burst?1:0})}
+function heart(x,y,s){cx.beginPath();cx.moveTo(x,y+s/4);cx.bezierCurveTo(x,y,x-s/2,y,x-s/2,y+s/4);
+  cx.bezierCurveTo(x-s/2,y+s/2,x,y+s*.7,x,y+s);cx.bezierCurveTo(x,y+s*.7,x+s/2,y+s/2,x+s/2,y+s/4);
+  cx.bezierCurveTo(x+s/2,y,x,y,x,y+s/4);cx.fill()}
+(function loop(){
+  cx.clearRect(0,0,cv.width,cv.height);
+  if(Math.random()<.05)spawn();
+  hs=hs.filter(h=>h.y>-30&&h.a>0.02);
+  hs.forEach(h=>{h.y-=h.v*(h.life?3:1);h.x+=h.dx;if(h.life)h.a-=.012;cx.fillStyle=`rgba(232,137,155,${h.a*.5})`;heart(h.x,h.y,h.s)});
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
